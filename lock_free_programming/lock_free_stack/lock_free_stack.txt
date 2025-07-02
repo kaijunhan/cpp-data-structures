@@ -1,0 +1,28 @@
+Here I will talk about my implementation of the lock-free stack 
+
+A std::stack follows the LIFO principle (Last In – First Out) and here I have implemented a stack with three basic functions - push,pop and top. 
+
+Compare-and-Swap (CAS) is an atomic read-modify-write primitive that:
+
+Reads a memory location p.
+Compares it to an expected value.
+If they match, atomically writes a desired new value into p.
+Returns true on success (swap occurred), or false on failure (and updates expected to the current value).
+This single indivisible step enables building lock-free data structures without traditional mutexes.
+
+
+compare_exchange_weak vs. compare_exchange_strong
+compare_exchange_weak(expected, desired)
+• May fail spuriously (false negative).
+• Ideal in loops that retry on any false return.
+Because `compare_exchange_weak` takes its `expected` parameter by reference, whenever it fails it writes the atomic’s current value back into `expected` before returning `false`. This could or could not be intended behaviour.
+
+compare_exchange_strong(expected, desired)
+• Fails only if the value truly differs from expected.
+• Use when you perform exactly one CAS and handle failure explicitly.
+When you need exactly one CAS without looping, prefer compare_exchange_strong.
+
+My first rendition of a lock free stack:
+
+
+Learnt about the ABA problem:
